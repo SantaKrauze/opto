@@ -8,6 +8,7 @@ namespace CppCLRWinformsProjekt {
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+	using namespace System::IO::Ports;
 
 	/// <summary>
 	/// Zusammenfassung für Form1
@@ -347,7 +348,87 @@ namespace CppCLRWinformsProjekt {
 
 		}
 #pragma endregion
+
+	public: SerialPort^ MonochromatorPort = nullptr;
+	public: SerialPort^ MetexPort = nullptr;
 	private: System::Void Form1_Load(System::Object^ sender, System::EventArgs^ e) {
+		MetexPort = gcnew SerialPort("COM1", 1200, Parity::None, 7, StopBits::Two);
+		MetexPort->Open();
+		MetexPort->DtrEnable = true;
+		MetexPort->RtsEnable = false;
+		MetexPort->ReadTimeout = 2000;
+		MonochromatorPort = gcnew SerialPort("COM2", 9600, Parity::None, 8, StopBits::One);
+		MonochromatorPort->Open();
+		MonochromatorPort->DtrEnable = true;
+		MonochromatorPort->RtsEnable = true;
+	}
+
+	private: System::Void setWave(int wave) {
+		unsigned int m_lGotoWL = 635;
+		unsigned char HiB = (m_lGotoWL & 0xFF00) >> 8;
+		unsigned char LoB = m_lGotoWL & 0xFF;
+		array<unsigned char>^ buffer = gcnew array<unsigned char, 1> {16, HiB, LoB};
+		MonochromatorPort->Write(buffer, 0, buffer->GetLength(0));
+	}
+	private: float getValue() {
+		array<unsigned char>^ buffer = gcnew array<unsigned char, 1> {'D'};
+		MetexPort->Write(buffer, 0, buffer->GetLength(0));
+		System::Threading::Thread::Sleep(500);
+		array<unsigned char, 1>^ buf = gcnew array<unsigned char, 1>(14);
+		MetexPort->Read(buf, 0, 14);
+		if (buf[13] != 13) {
+			return 0;
+		}
+		int sign = 1;
+		if (buf[3] == '-') sign = -1;
+		char str[6];
+		for (int i = 0; i < 5; i++) {
+			str[i] = buf[4 + 1];
+			str[5] = '\0';
+		}
+		String^ str_val = gcnew String(str);
+		str_val = str_val->Replace(".", ",");
+		double m = 1;
+		if (buf[9] == 'M') m = 1e6;
+		if (buf[9] == 'K') m = 1e3;
+		if (buf[11] == 'm') m = 1e-3;
+		if (buf[11] == 'u') m = 1e-6;
+		return sign * Convert::ToSingle(str_val) * m;
+	}
+	private: System::Void getButton_Click(System::Object^ sender, System::EventArgs^ e) {
+		float val = getValue();
+		valueBox->Text = Convert::ToString(val);
+	}
+	private: System::Void timer1_Tick(System::Object^ sender, System::EventArgs^ e) {
+		if (progressBar->Value < progressBar->Maximum) {
+			float arg = progressBar->Value;
+			setWave(arg);
+			float value = getValue();
+			chart->Series["Series1"]->Points->AddXY(arg, value);
+			progressBar->Value += Convert::ToInt32(deltaLambda->Text, 10);
+		}
+		else {
+			timer1->Enabled = false;
+			progressBar->Value = 0;
+		}
+	}
+	private: System::Void wavelenght_ValueChanged(System::Object^ sender, System::EventArgs^ e) {
+		setWave((int)wavelenght->Value);
+	}
+	private: System::Void measureButoon_Click(System::Object^ sender, System::EventArgs^ e) {
+		chart->Series["Series1"]->Points->Clear();
+		progressBar->Value = Convert::ToInt32(lambdaStart->Text,10);
+		progressBar->Maximum = Convert::ToInt32(lambdaEnd->Text, 10);
+		timer1->Enabled = true;
+	}
+	private: System::Void saveToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
+		if (saveFileDialog1->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
+			//some day maybe...
+		}
+	}
+	private: System::Void progressBar_Click(System::Object^ sender, System::EventArgs^ e) {
+	}
+	private: System::Void lambdaStart_TextChanged(System::Object^ sender, System::EventArgs^ e) {
 	}
 	private: System::Void chart1_Click(System::Object^ sender, System::EventArgs^ e) {
 	}
@@ -357,46 +438,7 @@ namespace CppCLRWinformsProjekt {
 	}
 	private: System::Void groupBox2_Enter(System::Object^ sender, System::EventArgs^ e) {
 	}
-	private: System::Void getButton_Click(System::Object^ sender, System::EventArgs^ e) {
-		//get value, set textbox
-	}
-	private: System::Void timer1_Tick(System::Object^ sender, System::EventArgs^ e) {
-		if (progressBar->Value < progressBar->Maximum) {
-			float arg = progressBar->Value;
-			//set wl
-			//get value
-			float value = progressBar->Value;
-			chart->Series["Series1"]->Points->AddXY(arg, value);
-			progressBar->Value += Convert::ToInt32(deltaLambda->Text, 10);
-		}
-		else {
-			timer1->Enabled = false;
-			progressBar->Value = 0;
-			//set wl = start
-		}
-		//set wavelenght, get value, update progress bar and chart
-	}
 	private: System::Void valueBox_TextChanged(System::Object^ sender, System::EventArgs^ e) {
-		//get value
 	}
-	private: System::Void wavelenght_ValueChanged(System::Object^ sender, System::EventArgs^ e) {
-		//set wavelenght
-	}
-	private: System::Void measureButoon_Click(System::Object^ sender, System::EventArgs^ e) {
-		chart->Series["Series1"]->Points->Clear();
-		progressBar->Value = Convert::ToInt32(lambdaStart->Text,10);
-		progressBar->Maximum = Convert::ToInt32(lambdaEnd->Text, 10);
-		//set wavelenght
-		timer1->Enabled = true;
-	}
-	private: System::Void progressBar_Click(System::Object^ sender, System::EventArgs^ e) {
-	}
-private: System::Void saveToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
-	if (saveFileDialog1->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
-		//dfd
-	}
-}
-private: System::Void lambdaStart_TextChanged(System::Object^ sender, System::EventArgs^ e) {
-}
 };
 }
