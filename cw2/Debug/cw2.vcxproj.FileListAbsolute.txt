@@ -1,0 +1,5 @@
+C:\Users\jesusc01\Source\Repos\opto\cw2\Debug\cw2.vcxprojAssemblyReference.cache
+C:\Users\jesusc01\Source\Repos\opto\cw2\Debug\cw2.Form1.resources
+C:\Users\jesusc01\Source\Repos\opto\cw2\Debug\cw2.vcxproj.GenerateResource.cache
+C:\Users\jesusc01\Source\Repos\opto\cw2\Debug\cw2.exe
+C:\Users\jesusc01\Source\Repos\opto\cw2\Debug\cw2.pdb
