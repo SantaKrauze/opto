@@ -316,6 +316,9 @@ private: System::Void setU(int U) {
 }
 private: float getU() {
 	AX3005Port->Write("VOUT1?\\r\\n");
+	System::Threading::Thread::Sleep(500);
+	array<unsigned char, 1>^ buf = gcnew array<unsigned char, 1> {'D'};
+	AX3005Port->Read(buf, 0, 14);
 	//get U
 	return 0;
 }
@@ -348,7 +351,7 @@ private: System::Void timer1_Tick(System::Object^ sender, System::EventArgs^ e) 
 	if (progressBar1->Value < progressBar1->Maximum) {
 		float arg = progressBar1->Value;
 		setU(arg);
-		chart1->Series["Series1"]->Points->AddXY(getU(), getI());
+		chart1->Series["Series1"]->Points->AddXY(arg, getI());
 		progressBar1->Value += Convert::ToInt32(dUBox->Text, 10);
 	}
 }
