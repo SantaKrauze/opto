@@ -9,6 +9,7 @@ namespace CppCLRWinformsProjekt {
 	using namespace System::Data;
 	using namespace System::Drawing;
 	using namespace System::IO::Ports;
+	using namespace System::IO;
 
 	/// <summary>
 	/// Zusammenfassung für Form1
