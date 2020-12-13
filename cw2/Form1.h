@@ -353,7 +353,7 @@ namespace CppCLRWinformsProjekt {
 	public: SerialPort^ MonochromatorPort = nullptr;
 	public: SerialPort^ MetexPort = nullptr;
 	private: System::Void Form1_Load(System::Object^ sender, System::EventArgs^ e) {
-		MetexPort = gcnew SerialPort("COM1", 1200, Parity::None, 7, StopBits::Two);
+		MetexPort = gcnew SerialPort("COM5", 1200, Parity::None, 7, StopBits::Two);
 		MetexPort->Open();
 		MetexPort->DtrEnable = true;
 		MetexPort->RtsEnable = false;
@@ -425,7 +425,7 @@ namespace CppCLRWinformsProjekt {
 	private: System::Void saveToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
 		saveFileDialog1->Filter = "Text files (*.txt) | *.txt";
 		if (saveFileDialog1->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
-			StreamWriter^ pt = gcnew StreamWriter(saveFileDialog1->Filename, 0, System::Text::Encoding::Default);
+			StreamWriter^ pt = gcnew StreamWriter(saveFileDialog1->FileName, 0, System::Text::Encoding::Default);
 			DataVisualization::Charting::DataPoint^ wPoint;
 			for (int i = 1; i < chart->Series["Series1"]->Points->Count; i++){
 				wPoint = chart->Series["Series1"]->Points[i];

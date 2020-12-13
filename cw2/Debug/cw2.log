@@ -1,0 +1,6 @@
+﻿  CppCLR_WinformsProjekt.cpp
+C:\Users\jesusc01\source\repos\opto\cw2\Form1.h(397,44): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+C:\Users\jesusc01\source\repos\opto\cw2\Form1.h(405,14): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+C:\Users\jesusc01\source\repos\opto\cw2\Form1.h(406,12): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  AssemblyInfo.obj : MSIL module encountered; incremental linking is disabled for MSIL; performing full link
+  cw2.vcxproj -> C:\Users\jesusc01\source\repos\opto\cw2\Debug\cw2.exe

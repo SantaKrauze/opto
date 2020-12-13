@@ -31,3 +31,5 @@
 *.out
 *.app
 /.vs/opto/v16/Browse.VC.opendb
+/cw2/.vs/cw2/v16/Browse.VC.opendb
+/cw4/.vs/cw4/v16/Browse.VC.opendb
