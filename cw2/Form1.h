@@ -364,7 +364,7 @@ namespace CppCLRWinformsProjekt {
 	}
 
 	private: System::Void setWave(int wave) {
-		unsigned int m_lGotoWL = 635;
+		unsigned int m_lGotoWL = wave;
 		unsigned char HiB = (m_lGotoWL & 0xFF00) >> 8;
 		unsigned char LoB = m_lGotoWL & 0xFF;
 		array<unsigned char>^ buffer = gcnew array<unsigned char, 1> {16, HiB, LoB};
@@ -383,9 +383,9 @@ namespace CppCLRWinformsProjekt {
 		if (buf[3] == '-') sign = -1;
 		char str[6];
 		for (int i = 0; i < 5; i++) {
-			str[i] = buf[4 + 1];
-			str[5] = '\0';
+			str[i] = buf[4 + i];
 		}
+		str[5] = '\0';
 		String^ str_val = gcnew String(str);
 		str_val = str_val->Replace(".", ",");
 		double m = 1;
@@ -422,8 +422,15 @@ namespace CppCLRWinformsProjekt {
 		timer1->Enabled = true;
 	}
 	private: System::Void saveToolStripMenuItem_Click(System::Object^ sender, System::EventArgs^ e) {
+		saveFileDialog1->Filter = "Text files (*.txt) | *.txt";
 		if (saveFileDialog1->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
-			//some day maybe...
+			StreamWriter^ pt = gcnew StreamWriter(saveFileDialog1->Filename, 0, System::Text::Encoding::Default);
+			DataVisualization::Charting::DataPoint^ wPoint;
+			for (int i = 1; i < chart->Series["Series1"]->Points->Count; i++){
+				wPoint = chart->Series["Series1"]->Points[i];
+				pt->Write((wPoint->XValue).ToString() + ";" + (wPoint->YValues[0]).ToString() + System::Environment::NewLine);
+			}
+			pt->Close();
 		}
 	}
 	private: System::Void progressBar_Click(System::Object^ sender, System::EventArgs^ e) {
