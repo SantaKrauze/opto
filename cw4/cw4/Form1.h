@@ -66,6 +66,7 @@ namespace CppCLRWinformsProjekt {
 	private: System::Windows::Forms::Label^ label4;
 	private: System::Windows::Forms::TextBox^ textBox2;
 	private: System::Windows::Forms::TextBox^ textBox1;
+	private: System::Windows::Forms::Button^ connect;
 
 	private: System::ComponentModel::IContainer^ components;
 
@@ -104,6 +105,7 @@ namespace CppCLRWinformsProjekt {
 			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->textBox2 = (gcnew System::Windows::Forms::TextBox());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
+			this->connect = (gcnew System::Windows::Forms::Button());
 			this->groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericDU))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->numericU2))->BeginInit();
@@ -249,7 +251,7 @@ namespace CppCLRWinformsProjekt {
 			// 
 			// progressBar1
 			// 
-			this->progressBar1->Location = System::Drawing::Point(479, 327);
+			this->progressBar1->Location = System::Drawing::Point(478, 403);
 			this->progressBar1->Name = L"progressBar1";
 			this->progressBar1->Size = System::Drawing::Size(239, 23);
 			this->progressBar1->TabIndex = 3;
@@ -257,7 +259,7 @@ namespace CppCLRWinformsProjekt {
 			// start
 			// 
 			this->start->DialogResult = System::Windows::Forms::DialogResult::Cancel;
-			this->start->Location = System::Drawing::Point(480, 356);
+			this->start->Location = System::Drawing::Point(478, 441);
 			this->start->Name = L"start";
 			this->start->Size = System::Drawing::Size(75, 23);
 			this->start->TabIndex = 4;
@@ -317,7 +319,7 @@ namespace CppCLRWinformsProjekt {
 			this->groupBox5->Controls->Add(this->label4);
 			this->groupBox5->Controls->Add(this->textBox2);
 			this->groupBox5->Controls->Add(this->textBox1);
-			this->groupBox5->Location = System::Drawing::Point(479, 395);
+			this->groupBox5->Location = System::Drawing::Point(479, 310);
 			this->groupBox5->Name = L"groupBox5";
 			this->groupBox5->Size = System::Drawing::Size(239, 87);
 			this->groupBox5->TabIndex = 7;
@@ -360,15 +362,26 @@ namespace CppCLRWinformsProjekt {
 			this->textBox1->Text = L"1";
 			this->textBox1->TextChanged += gcnew System::EventHandler(this, &Form1::textBox1_TextChanged);
 			// 
+			// connect
+			// 
+			this->connect->Location = System::Drawing::Point(615, 441);
+			this->connect->Name = L"connect";
+			this->connect->Size = System::Drawing::Size(75, 23);
+			this->connect->TabIndex = 8;
+			this->connect->Text = L"Connect";
+			this->connect->UseVisualStyleBackColor = true;
+			this->connect->Click += gcnew System::EventHandler(this, &Form1::connect_Click);
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(764, 502);
+			this->Controls->Add(this->connect);
+			this->Controls->Add(this->start);
 			this->Controls->Add(this->groupBox5);
 			this->Controls->Add(this->groupBox1);
 			this->Controls->Add(this->groupBox4);
-			this->Controls->Add(this->start);
 			this->Controls->Add(this->progressBar1);
 			this->Controls->Add(this->groupBox3);
 			this->Controls->Add(this->groupBox2);
@@ -401,14 +414,8 @@ namespace CppCLRWinformsProjekt {
 
 public: SerialPort^ MetexPort = nullptr;
 public: SerialPort^ AX3005Port = nullptr;
-private: System::Void Form1_Load(System::Object^ sender, System::EventArgs^ e) {
-		   
-}
-private: System::Void textBox2_TextChanged(System::Object^ sender, System::EventArgs^ e) {
-	AX3005Port = gcnew SerialPort("COM" + textBox2->Text, 9600, Parity::None, 8, StopBits::One);
-	AX3005Port->Open();
-}
-private: System::Void textBox1_TextChanged(System::Object^ sender, System::EventArgs^ e) {
+
+private: System::Void connect_Click(System::Object^ sender, System::EventArgs^ e) {
 	MetexPort = gcnew SerialPort("COM" + textBox1->Text, 1200, Parity::None, 7, StopBits::Two);
 	MetexPort->Open();
 	if (MetexPort->IsOpen) {
@@ -416,19 +423,16 @@ private: System::Void textBox1_TextChanged(System::Object^ sender, System::Event
 		MetexPort->RtsEnable = false;
 		MetexPort->ReadTimeout = 2000;
 	}
+	AX3005Port = gcnew SerialPort("COM" + textBox2->Text, 9600, Parity::None, 8, StopBits::One);
+	AX3005Port->Open();
 }
 private: System::Void getI_Click(System::Object^ sender, System::EventArgs^ e) {
 	IBox->Text = Convert::ToString(getI());
 }
-private: System::Void start_Click(System::Object^ sender, System::EventArgs^ e) {
-	chart1->Series["Series1"]->Points->Clear();
-	progressBar1->Value = (float)numericU1->Value;
-	progressBar1->Maximum = (float)numericU2->Value;
-	timer1->Enabled = true;
-}
 private: System::Void setU(float U) {
 	if(U < 10) AX3005Port->Write("VSET1:0" + U.ToString() + ",0\\r\\n");
 	else AX3005Port->Write("VSET1:" + U.ToString() + ",0\\r\\n");
+	AX3005Port->Write("OUTPUT1\\r\\n");
 }
 private: float getU() {
 	AX3005Port->Write("VOUT1?\\r\\n");
@@ -463,12 +467,20 @@ private: float getI() {
 	if (buf[11] == 'u') m = 1e-6;
 	return sign * Convert::ToSingle(str_val) * m;
 }
+private: System::Void start_Click(System::Object^ sender, System::EventArgs^ e) {
+	chart1->Series["Series1"]->Points->Clear();
+	progressBar1->Value = 0;
+	progressBar1->Maximum = ((float)numericU2->Value - (float)numericU1->Value) / (float)numericDU->Value;
+	timer1->Enabled = true;
+	setU(0);
+	AX3005Port->Write("OUTPUT1\\r\\n");
+}
 private: System::Void timer1_Tick(System::Object^ sender, System::EventArgs^ e) {
 	if (progressBar1->Value < progressBar1->Maximum) {
-		float arg = progressBar1->Value;
+		float arg = (float)numericU1->Value + progressBar1->Value * (float)numericDU->Value;
 		setU(arg);
 		chart1->Series["Series1"]->Points->AddXY(arg, getI());
-		progressBar1->Value += (float)numericDU->Value;
+		progressBar1->Value++;
 	}
 }
 private: System::Void numericUpDown1_ValueChanged(System::Object^ sender, System::EventArgs^ e) {
@@ -493,6 +505,15 @@ private: System::Void chart1_Click(System::Object^ sender, System::EventArgs^ e)
 	//nothing
 }
 private: System::Void U1Box_TextChanged(System::Object^ sender, System::EventArgs^ e) {
+	//nothing
+}
+private: System::Void Form1_Load(System::Object^ sender, System::EventArgs^ e) {
+	//nothing
+}
+private: System::Void textBox2_TextChanged(System::Object^ sender, System::EventArgs^ e) {
+	//nothing
+}
+private: System::Void textBox1_TextChanged(System::Object^ sender, System::EventArgs^ e) {
 	//nothing
 }
 };
