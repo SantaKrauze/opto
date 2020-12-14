@@ -1,0 +1,3 @@
+C:\Users\jesusc01\source\repos\opto\cw4\cw4\Debug\cw4.vcxprojAssemblyReference.cache
+C:\Users\jesusc01\source\repos\opto\cw4\cw4\Debug\cw4.Form1.resources
+C:\Users\jesusc01\source\repos\opto\cw4\cw4\Debug\cw4.vcxproj.GenerateResource.cache
