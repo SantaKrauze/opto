@@ -430,8 +430,9 @@ private: System::Void getI_Click(System::Object^ sender, System::EventArgs^ e) {
 	IBox->Text = Convert::ToString(getI());
 }
 private: System::Void setU(float U) {
-	if(U < 10) AX3005Port->Write("VSET1:0" + U.ToString() + ",0\\r\\n");
-	else AX3005Port->Write("VSET1:" + U.ToString() + ",0\\r\\n");
+	if(U < 10) AX3005Port->Write("VSET1:0" + U.ToString() + "\\r\\n");
+	else AX3005Port->Write("VSET1:" + U.ToString() + "\\r\\n");
+	//AX3005Port->Write("VSET1:" + U.ToString() + "\\r\\n");
 	AX3005Port->Write("OUTPUT1\\r\\n");
 }
 private: float getU() {
@@ -482,6 +483,7 @@ private: System::Void timer1_Tick(System::Object^ sender, System::EventArgs^ e) 
 		chart1->Series["Series1"]->Points->AddXY(arg, getI());
 		progressBar1->Value++;
 	}
+	else AX3005Port->Write("OUTPUT0\\r\\n");
 }
 private: System::Void numericUpDown1_ValueChanged(System::Object^ sender, System::EventArgs^ e) {
 	setU((float)numericUSet->Value);

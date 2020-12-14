@@ -1,8 +1,5 @@
 ﻿  CppCLR_WinformsProjekt.cpp
-C:\Users\jesusc01\source\repos\opto\cw4\cw4\Form1.h(425,40): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\jesusc01\source\repos\opto\cw4\cw4\Form1.h(426,42): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\jesusc01\source\repos\opto\cw4\cw4\Form1.h(464,43): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-C:\Users\jesusc01\source\repos\opto\cw4\cw4\Form1.h(468,13): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-C:\Users\jesusc01\source\repos\opto\cw4\cw4\Form1.h(471,23): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\jesusc01\source\repos\opto\cw4\cw4\Form1.h(468,43): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+C:\Users\jesusc01\source\repos\opto\cw4\cw4\Form1.h(473,78): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
   AssemblyInfo.obj : MSIL module encountered; incremental linking is disabled for MSIL; performing full link
   cw4.vcxproj -> C:\Users\jesusc01\source\repos\opto\cw4\Debug\cw4.exe
